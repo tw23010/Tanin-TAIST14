@@ -26,25 +26,40 @@
       <div class="left"><ons-back-button>Page 1</ons-back-button></div>
       <div class="center"></div>
     </ons-toolbar>
-    
-<p id="latlng">This is the second page.</p>
-   
+
+    <p id="latlng">This is the second page.</p>
   </ons-page>
 </template>
-  <script> 
+  <script>
     document.addEventListener('init', function(event) {
   var page = event.target;
-      function showPosition(position) {
+      
+function showPosition(position) {
     page.querySelector('#latlng').innerHTML = "Latitude: " + position.coords.latitude + "<br>Longitude: " + position.coords.longitude;
+const Url = 'https://inter-slumba.firebaseio.com/Pawii.json';
+   let Data = {
+      latitude:position.coords.latitude,
+      longitude:position.coords.longitude
+    };
+    const Params = {
+      headers:{ 
+        'Content-Type':'application/json'
+      },
+      body:JSON.stringify(Data),
+      method:'POST'
+    };
+    console.log(JSON.stringify(Data));
+    fetch(Url, Params).then(data=>{return data.json();}).then(res=>{console.log(res);});
 }
-
+      
+      
   if (page.id === 'page1') {
-    navigator.geolocation.getCurrentPosition(showPosition);
     page.querySelector('#push-button').onclick = function() {
       document.querySelector('#myNavigator').pushPage('page2.html', {data: {title: 'Page 2'}});
     };
   } else if (page.id === 'page2') {
     page.querySelector('ons-toolbar .center').innerHTML = page.data.title;
+    navigator.geolocation.getCurrentPosition(showPosition);
   }
 });
   </script>
